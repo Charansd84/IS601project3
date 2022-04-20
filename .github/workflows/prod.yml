@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: swapnilsinha/final_project_601
+          images: sai84/is601logginghw
 
       - name: Build and push
         uses: docker/build-push-action@v2
