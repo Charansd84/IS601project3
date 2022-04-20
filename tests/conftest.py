@@ -28,5 +28,5 @@ def runner(application):
 
 
 @pytest.fixture()
-def make_log_folder(runner):
+def make_log_folder(runner, create_log_folder=None):
     runner.invoke(create_log_folder)
