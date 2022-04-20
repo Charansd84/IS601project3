@@ -3,7 +3,18 @@
     <div class="row">
         <article class="col-12">
             <h1>Welcome</h1>
-            {{ lipsum (n=5, html=True, min=20, max=100) }}
+            <pre>1. Ensure Unit Tests are independent of each other:
+While performing unit testing, make sure that all the unit tests are independent. If having any dependencies, then unit tests can get affected when there are any changes or enhancements. Also, it can result in complexities for the test cases to run and debug. Hence, always make sure that unit test cases are independent.
+2. Always stick to one code unit at once:
+When testing a unit of code, though it relates to multiple use cases, unit testers have to test each use case in different test cases. This will effectively simplify the teams to do code changes or refactoring.
+3. Make use of AAA for readability:
+AAA stands for Arrange, Act, and Assert. This pattern helps in separating what is being tested from the “arrange” and “assert” steps; thus reduces the inter-mix of the assertions with the help of the “Act”. Thus, the test cases are more readable.
+4. Fix the bugs before moving for Integration Testing:
+Unit testing is the first testing phase and it is practiced before moving to the phase of integration testing. Hence, before moving for the next testing level, make sure to fix all the identified bugs in the unit testing phase.
+5. Ensure to have proper variable naming:
+In unit testing, one of the important and best practices is to have proper naming of the variables. Therefore, avoid using magic strings, and also follow clear and consistent naming conventions.
+6. Always separate test code and production code:
+While performing unit testing, make sure that the test code is not deployed with the source code in your build script.</pre>
         </article>
     </div>
 {% endblock %}
