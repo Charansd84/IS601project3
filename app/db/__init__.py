@@ -1,90 +1,35 @@
-from datetime import datetime
+import logging
+import os
 
-from sqlalchemy import Integer, ForeignKey
-from sqlalchemy.orm import relationship
-from werkzeug.security import check_password_hash, generate_password_hash
-from app.db import db
-from flask_login import UserMixin
-from sqlalchemy_serializer import SerializerMixin
+from flask import Blueprint, cli
+from flask_sqlalchemy import SQLAlchemy
 
-class Song(db.Model,SerializerMixin):
-    __tablename__ = 'songs'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(300), nullable=True, unique=False)
-    artist = db.Column(db.String(300), nullable=True, unique=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = relationship("User", back_populates="songs", uselist=False)
+from app import config
 
-    def __init__(self, title, artist):
-        self.title = title
-        self.artist = artist
+db = SQLAlchemy()
 
-class Location(db.Model, SerializerMixin):
-    __tablename__ = 'locations'
-    serialize_only = ('title', 'longitude', 'latitude')
+database = Blueprint('database', __name__,)
 
+@database.cli.command('create')
+def init_db():
+    db.create_all()
 
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(300), nullable=True, unique=False)
-    longitude = db.Column(db.String(300), nullable=True, unique=False)
-    latitude = db.Column(db.String(300), nullable=True, unique=False)
-    population = db.Column(db.Integer, nullable=True, unique=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = relationship("User", back_populates="locations", uselist=False)
+@database.before_app_first_request
+def create_db_file_if_does_not_exist():
+    root = config.Config.BASE_DIR
+    # set the name of the apps log folder to logs
+    dbdir = os.path.join(root,'..',config.Config.DB_DIR)
+    # make a directory if it doesn't exist
+    if not os.path.exists(dbdir):
+        os.mkdir(dbdir)
+    db.create_all()
 
-    def __init__(self, title, longitude, latitude, population):
-        self.title = title
-        self.longitude = longitude
-        self.latitude = latitude
-        self.population = population
-
-    def serialize(self):
-        return {
-            'title': self.title,
-            'long': self.longitude,
-            'lat': self.latitude,
-            'population': self.population,
-        }
-
-
-class User(UserMixin, db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(300), nullable=False)
-    about = db.Column(db.String(300), nullable=True, unique=False)
-    authenticated = db.Column(db.Boolean, default=False)
-    registered_on = db.Column('registered_on', db.DateTime)
-    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
-    is_admin = db.Column('is_admin', db.Boolean(), nullable=False, server_default='0')
-    songs = db.relationship("Song", back_populates="user", cascade="all, delete")
-    locations = db.relationship("Location", back_populates="user", cascade="all, delete")
-
-    # `roles` and `groups` are reserved words that *must* be defined
-    # on the `User` model to use group- or role-based authorization.
-
-    def __init__(self, email, password):
-        self.email = email
-        self.password = password
-        self.registered_on = datetime.utcnow()
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return self.id
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-    def __repr__(self):
-        return '<User %r>' % self.email
+@database.before_app_first_request
+def create_upload_folder():
+    root = config.Config.BASE_DIR
+    # set the name of the apps log folder to logs
+    uploadfolder = os.path.join(root,'..',config.Config.UPLOAD_FOLDER)
+    # make a directory if it doesn't exist
+    if not os.path.exists(uploadfolder):
+        os.mkdir(uploadfolder)
+    db.create_all()
