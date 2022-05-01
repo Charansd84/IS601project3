@@ -1,21 +1,19 @@
 import logging
+import os
 from logging.config import dictConfig
 
 import flask
-from flask import request, current_app, blueprints
+from flask import request, current_app
 
-from app.logging_config.log_formatters import RequestFormatter
+#from app.logging_config.log_formatters import RequestFormatter
+from app import config
 
 log_con = flask.Blueprint('log_con', __name__)
 
 
-@log_con.before_app_request
-def before_request_logging():
-    current_app.logger.info("Before Request")
-    log = logging.getLogger("myApp")
-    log.info("My App Logger")
-    log = logging.getLogger("myDebug")
-    log.debug("My Debug Logger Message")
+#@log_con.before_app_request
+#def before_request_logging():
+
 
 
 @log_con.after_app_request
@@ -26,22 +24,18 @@ def after_request_logging(response):
         return response
     elif request.path.startswith('/bootstrap'):
         return response
-    current_app.logger.info("After Request")
-
-    log = logging.getLogger("myApp")
-    log.info("My App Logger")
-    log = logging.getLogger("myDebug")
-    log.debug("My Debug Logger Message")
     return response
 
-
 @log_con.before_app_first_request
-def configure_logging():
+def setup_logs():
+
+    # set the name of the apps log folder to logs
+    logdir = config.Config.LOG_DIR
+    # make a directory if it doesn't exist
+    if not os.path.exists(logdir):
+        os.mkdir(logdir)
     logging.config.dictConfig(LOGGING_CONFIG)
-    log = logging.getLogger("myApp")
-    log.info("My App Logger")
-    log = logging.getLogger("myDebug")
-    log.debug("My Debug Logger Message")
+
 
 
 LOGGING_CONFIG = {
@@ -51,15 +45,7 @@ LOGGING_CONFIG = {
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
-        'RequestFormatter': {
-            '()': 'app.logging_config.log_formatters.RequestFormatter',
-            'format': '[%(asctime)s] [%(process)d] %(remote_addr)s requested %(url)s'
-                      '%(levelname)s in %(module)s: %(message)s'
-        },
-        'DebugFormatter': {
-            '()': 'app.logging_config.log_formatters.RequestFormatter',
-            'format': '%(levelname)s : %(message)s'
-        }
+
     },
     'handlers': {
         'default': {
@@ -68,43 +54,80 @@ LOGGING_CONFIG = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',  # Default is stderr
         },
-        'file.handler.myApp': {
+        'file.handler': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'RequestFormatter',
-            # 'filename': 'app/logs/myinfo.log',
-            'filename': os.path.join(config.Config.LOG_DIR, 'myApp.log'),
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'handler.log'),
             'maxBytes': 10000000,
             'backupCount': 5,
         },
-        'file.handler.myDebug': {
+        'file.handler.myapp': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'DebugFormatter',
-            'filename': os.path.join(config.Config.LOG_DIR, 'myDebug.log'),
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'myapp.log'),
+            'maxBytes': 10000000,
+            'backupCount': 5,
+        },
+        'file.handler.request': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'request.log'),
+            'maxBytes': 10000000,
+            'backupCount': 5,
+        },
+        'file.handler.errors': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'errors.log'),
+            'maxBytes': 10000000,
+            'backupCount': 5,
+        },
+        'file.handler.sqlalchemy': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'sqlalchemy.log'),
+            'maxBytes': 10000000,
+            'backupCount': 5,
+        },
+        'file.handler.werkzeug': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(config.Config.LOG_DIR,'werkzeug.log'),
             'maxBytes': 10000000,
             'backupCount': 5,
         },
     },
     'loggers': {
         '': {  # root logger
-            'handlers': ['default'],
+            'handlers': ['default','file.handler'],
             'level': 'DEBUG',
             'propagate': True
         },
         '__main__': {  # if __name__ == '__main__'
-            'handlers': ['default'],
+            'handlers': ['default','file.handler'],
             'level': 'DEBUG',
             'propagate': True
         },
-        'myApp': {  # if __name__ == '__main__'
-            'handlers': ['file.handler.myApp'],
+        'werkzeug': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.werkzeug'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'sqlalchemy.engine': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.sqlalchemy'],
             'level': 'INFO',
             'propagate': False
         },
-        'myDebug': {  # if __name__ == '__main__'
-            'handlers': ['file.handler.myDebug'],
+        'myApp': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.myapp'],
             'level': 'DEBUG',
             'propagate': False
-        }
+        },
+        'myerrors': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.errors'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
 
     }
 }
