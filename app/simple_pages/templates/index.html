@@ -4,13 +4,7 @@
         <article class="col-8 lh-lg fs-5">
 
             <h1>Index Page</h1>
-            <pre>Unit Testing is the software testing technique where a group of software program components or modules are tested individually. This technique effectively helps in validating the accuracy of a section of code by considering stubs, mock objects, drivers, and unit testing frameworks. Since it is practiced at the initial testing phase, this testing technique assures to identify and fix the bugs at the early stage of SDLC even before they become expensive for the enterprises to fix when identified at a later stage.
-
-Some developers may attempt to save time by performing minimal unit testing, or when unit testing is skipped, it obviously leads to higher defect fixing costs during system testing, integration testing, and even beta testing when the application is completed.
-
-Moreover, in addition to these, unit testing helps the development teams to understand the code base, validate the correctness of the developed code, reuse the code, and to make the changes faster in the code.
-
-With a proper unit testing practice in place, the developers and testers can help to save time as bugs can be identified early in the process as it is the initial phase of testing. And, skipping or limiting the practice of unit testing can adversely increase the defects and it becomes complex to fix them at a later stage. Hence, it is essential to practice unit testing at the initial stage of the software testing process before planning for the integration testing.</pre>
+            {{ lipsum (n=5, html=True, min=20, max=100) }}
         </article>
         {% if current_user.is_authenticated == false %}
             <aside class="col-4">
