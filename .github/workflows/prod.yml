@@ -39,9 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: sai84
-/
-is601project3
+          images: sai84/is601project3
 
       - name: Build and push
         uses: docker/build-push-action@v2
