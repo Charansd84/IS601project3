@@ -6,9 +6,9 @@ def test_register(client):
     """This tests for successful registration"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1",
+            "confirm": "njitmother@1"
         },
                                         follow_redirects=True)
         # After successful registration,redirected to login page
@@ -20,9 +20,9 @@ def test_login(client):
     """This tests for successful login"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1",
+            "confirm": "njitmother@1"
         },
                                         follow_redirects=True)
 
@@ -30,8 +30,8 @@ def test_login(client):
         assert register_response.request.path == url_for('auth.register')
 
         login_response = client.post("/login", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1"
         },
                                      follow_redirects=True)
         # After successful login ,redirected to dashboard
@@ -43,15 +43,15 @@ def test_dashboard_access(client):
     """This tests for successful access to dashboard after login"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1",
+            "confirm": "njitmother@1"
         },
                                         follow_redirects=True)
 
         login_response = client.post("/login", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1"
         }, follow_redirects=True)
         assert login_response.request.path == url_for('auth.login')
         assert login_response.status_code == 400
@@ -61,9 +61,9 @@ def test_dashboard_access_denied(client):
     """This tests for unsuccessful access to dashboard after login"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1",
+            "confirm": "njitmother@1"
         },
                                         follow_redirects=True)
 
@@ -71,8 +71,8 @@ def test_dashboard_access_denied(client):
         assert register_response.request.path == url_for('auth.register')
 
         login_response = client.post("/login", data={
-            "email": "testuser1@test.com",
-            "password": "test1234!test"
+            "email": "sd84@njit.edu",
+            "password": "njitmother@1"
         },
                                      follow_redirects=True)
         assert login_response.request.path == url_for('auth.login')
