@@ -15,7 +15,7 @@ def test_adding_user(application):
         assert db.session.query(Transaction).count() == 0
         # showing how to add a record
         # create a record
-        user = User('sbangaloreashok@gmail.com', 'sumanatest')
+        user = User('sd84@njit.edu', 'sd84')
         # add it to get ready to be committed
         db.session.add(user)
         # call the commit
@@ -23,12 +23,12 @@ def test_adding_user(application):
         # assert that we now have a new user
         assert db.session.query(User).count() == 1
         # finding one user record by email
-        user = User.query.filter_by(email='sbangaloreashok@gmail.com').first()
+        user = User.query.filter_by(email='sd84@njit.edu').first()
         log.info(user)
         # asserting that the user retrieved is correct
-        assert user.email == 'sbangaloreashok@gmail.com'
+        assert user.email == 'sd84@njit.edu'
         # this is how you get a related record ready for insert
-        user.transactions = [Transaction("1", "2000", "CREDIT"), Transaction("2", "-1000", "DEBIT")]
+        user.transactions = [Transaction("1", "200", "CREDIT"), Transaction("2", "-200", "DEBIT")]
         # commit is what saves the transactions
         db.session.commit()
         assert db.session.query(Transaction).count() == 2
@@ -50,21 +50,21 @@ def test_edit_user_profile(client):
     """This tests editing user profile"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "NJITmother@1",
+            "confirm": "NJITmother@1"
         },
                                         follow_redirects=True)
         login_response = client.post("/login", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "NJITmother@1"
         },
                                      follow_redirects=True)
 
         assert login_response.status_code == 400
 
         form_data = {
-            "about":  f"Hi! i am sumana"
+            "about":  f"Hi! i am sd84"
         }
 
         user_update_response = client.post(
@@ -72,7 +72,7 @@ def test_edit_user_profile(client):
             data=form_data,
             follow_redirects=True)
 
-        user_object = User.query.filter_by(email='testuser1@test.com').first()
+        user_object = User.query.filter_by(email='sd84@njit.edu').first()
 
         assert user_update_response.status_code == 400
 
@@ -81,22 +81,22 @@ def test_edit_user_account(client):
     """This tests editing user account"""
     with client:
         register_response = client.post("/register", data={
-            "email": "testuser1@test.com",
-            "password": "test123!test",
-            "confirm": "test123!test"
+            "email": "sd84@njit.edu",
+            "password": "NJITmother@1",
+            "confirm": "NJITmother@1"
         },
                                         follow_redirects=True)
         login_response = client.post("/login", data={
             "email": "testuser1@test.com",
-            "password": "test123!test"
+            "password": "NJITmother@1"
         },
                                      follow_redirects=True)
         assert login_response.status_code == 400
 
         form_data = {
-            "email":  f"testuser123@test.com",
-            "password": f"testtest",
-            "confirm": f"testtest"
+            "email":  f"sd85@njit.edu",
+            "password": f"NJITmother@1",
+            "confirm": f"NJITmother@1"
         }
 
         user_update_response = client.post(
